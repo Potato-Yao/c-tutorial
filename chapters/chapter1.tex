@@ -109,6 +109,30 @@
     int math_grade = 120;
 \end{lstlisting}
 
+如果要同时声明多个类型一样的变量，那么可以写在一行，比如同时声明数学、语文和英语成绩：
+
+\begin{lstlisting}[language=C]
+    int math_grade, chinese_grade, english_grade;
+\end{lstlisting}
+
+不过笔者推荐每个变量单独成行，因为在最开始写代码时，我们可能由于考虑不周会选错变量类型（比如英语成绩会出现0.5分的情况，那么选择整数就不合适了），如果写在同一行会增大修改的难度，因此推荐每个变量分开声明：
+
+\begin{lstlisting}[language=C]
+    int math_grade;
+    int chinese_grade;
+    int english_grade;
+\end{lstlisting}
+
+那么变量的命名遵循怎样的原则呢？我们这里的命名是math\_grade，其实也可以命名成MathGrade，也可以是mathGrade，可以是拼音shuxuechengji，甚至可以是汉语的数学成绩，如果你比较懒，直接命名l这样的单字母都可以。c语言要求，变量名开头不是数字、不包含空格、标点和\%、@等符号，不是c语言关键字（后面会介绍这个概念）即可。那么我们为什么使用了math\_grade呢？
+
+首先我们说明为什么不用汉语或者汉语拼音。一方面，由于编码不同，在你的电脑上正常显示的中文可能在别人电脑上就变成了乱码（这就是第零章要求大家切换UTF8编码的原因），这样严重影响了正常的开发和交流工作。另一方面，大家有没有发现，当你在声明好变量后，你敲下“m”时就会出现一个框，可以直接补全math\_grade，这是IDE的自动补全功能，如果使用中文就无法自动补全了。zhi yu wei shen mo bu yong pin yin, ge wei jue de zhe yang de ke du xing gao ma?
+
+计算机语言的核心在于其逻辑而不是用了什么自然语言作为支撑，哪怕世界上第一门计算机语言是中国人发明的，计算机语言也会愈发趋向于使用字母来构成，因为这样效率更高。这样大家就可以明白那些被大肆宣扬的“汉语编程语言”的荒谬之处了，不要陷入了虚伪的爱国主义的陷阱。
+
+我们命名的math\_grade有个特点：单词全部小写，单词之间使用下划线\_连接。这种命名方式叫做蛇形命名法（snake\_case）。至于我们上面提到的mathGrade也是一种命名法，叫做小驼峰命名法（camelCase）。命名法和一些其它规则构成了代码风格（code style），本讲义遵循Google代码规范，也推荐各位使用这套代码规范。各位在阅读此讲义时应该注意示例代码的代码风格，自己写代码时要模仿示例代码的风格。不过，如果各位是参与到他人的项目，自然是要按照他人已有的标准来写代码。
+
+总结：变量命名使用蛇形命名，即connect\_every\_lowercase\_word\_by\_underscore
+
 我们可以这样打印整数变量
 
 \begin{lstlisting}[language=C]
@@ -261,3 +285,49 @@ scanf函数是scan function，它用来从终端获取输入的文本。这个�
 在visual stdio的项目右键，点击属性，点击“C/C++”，点击“预处理器”，点击“预处理器定义”，随后点击右边出现的小箭头，点击“<编辑>”，单独一行输入“\_CRT\_SECURE\_NO\_WARNINGS”，点击“确定”即可。
 
 此时我们再运行代码，终端首先变成这样
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.3\textheight]{images/1scanf首次.png}
+\end{figure}
+
+此时我们输入一个数字，点击回车，出现了这样的效果
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.3\textheight]{images/1scanf完成.png}
+\end{figure}
+
+如果我们要进行的是更复杂的输入呢？比如，我们需要数学、语文和英语三科成绩，那么可以这样写
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int math_grade;
+        int chinese_grade;
+        int english_grade;
+
+        printf("请输入数学、语文、英语成绩");
+        scanf("%d %d %d", &math_grade, &chinese_grade, &english_grade);
+
+        printf("三科成绩分别是：%d, %d, %d", math_grade, chinese_grade, english_grade);
+        
+        return 0;
+    } 
+\end{lstlisting}
+
+我们只需要按照这样输入：120 130 140，就能输出正确的成绩了。如果我们希望输入是120,130,140，那么就把scanf的一行改成
+
+\begin{lstlisting}[language=C]
+    scanf("%d,%d,%d", &math_grade, &chinese_grade, &english_grade);
+\end{lstlisting}
+
+这样我们就找到了规律，scanf的引号内的部分就像是一个模板，只有输入与模板对应，函数才正常运行。不信的话，我们可以试试在修改后的代码输入120 130 140，会得到这样的结果
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.3\textheight]{images/1scanf出错.png}
+\end{figure}
+
+非常抽象是不是？这是因为我们的输入没有符合模板的需求，模板需要我们在每两个成绩间使用英语逗号分割，我们用的却是空格，这种情况被称作未定义行为（undefined behavior），这是c语言中比较难以预测的一种的错误，我们后续会详细讲解。不知道各位记不记得，我们在解决那个error时，留了个warning？它说我们没有使用scanf的返回值，这个“返回值”就是用来解决这个问题的，我们学习到函数时会专门提到。
