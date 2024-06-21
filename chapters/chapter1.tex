@@ -1,0 +1,263 @@
+\section{标准输出和变量}
+
+\subsection{printf函数}
+
+打开visual studio，在“源文件”上右键，点击“添加”->“新建项”，创建一个叫main.c的文件，在其中输入
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+    
+    int main() {
+        printf("Hello World!");
+
+        return 0;
+    }
+\end{lstlisting}
+
+点击“本地Windows调试器”，将会出现类似于这样的界面
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.4\textheight]{images/1HelloWorld结果.png}
+\end{figure}
+
+恭喜你写出了你的第一段代码。计算机领域有一个传统：刚入门编程的人的第一段代码一定要是Hello World，这是我们对无垠的计算机世界打的招呼。这个黑乎乎的界面叫做终端（这里不做关于终端、shell等的详细区分），我们以后会常常和它打交道。
+
+我们发现，我们写在printf的引号内的内容会被打印出来（顾名思义，printf就是print function嘛），因此我们可以多写几个printf（不要忘了每行最后的英文分号），如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+    
+    int main() {
+        printf("Hello World!");
+        printf("Potato");
+
+        return 0;
+    }
+\end{lstlisting}
+
+运行代码，我们观察到Hello World和Potato输出在了同一行。我们想要的是这二者各自占一行，那就需要在Hello World!后加一个换行符，也即$\backslash$n，代码就变成了
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+    
+    int main() {
+        printf("Hello World!\n");
+        printf("Potato\n");
+
+        return 0;
+    }
+\end{lstlisting}
+
+这次的结果就是我们想要的了。为什么Potato也要加换行符？这是因为也许我们在其后还会添加新的printf，要是到时候忘了给Potato加换行符，不就没有实现我们想要的效果吗？为了避免以后出现不必要的问题，我们推荐每个printf后都加换行符。
+
+由上面的代码，我们总结出了这些要点：首先，我们要想输出信息，就要将其写在printf的引号内；其次，要想换行，就需要在输出的文本最后加一个换行符$\backslash$n；另外我们还注意到，我们先输出了Hello World，再输出了Potato，也就是说，程序是按照从上到下的顺序执行的。
+
+这是很重要的结论，所以我们使用printf输出一遍加强印象吧。于是我们写下了：
+
+\begin{lstlisting}[language=C]
+    printf("首先，我们要想输出信息，就要将其写在printf的引号内；其次，要想换行，就需要在输出的文本最后加一个换行符\n；\n");
+\end{lstlisting}
+
+我们注意到有个问题，就是第一个换行符是我们想要按照文本形式输出的，但是如果按照上面的写法，它会被用于换行而不是直接输出。为了解决这个问题，我们把代码改成这样即可：
+
+\begin{lstlisting}[language=C]
+    printf("首先，我们要想输出信息，就要将其写在printf的引号内；其次，要想换行，就需要在输出的文本最后加一个换行符\\n；\n");
+\end{lstlisting}
+
+运行结果是：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.4\textheight]{images/1换行符输出.png}
+\end{figure}
+
+为什么会这样呢？实际上，我们输入的$\backslash$n和$\backslash{}\backslash$都叫做转义符号，用来实现一些特殊的输出效果。它的语法就是反斜杠（$\backslash$）加一个字母。我们最常用的转义符号就是换行符$\backslash$n，实际上还有$\backslash$t、$\backslash$a等等。因为反斜杠会和下一个字母结合变成转义符号，所以要想输出反斜杠，就需要按照上面的例子那样使用两个反斜杠，这个转义符号的结果就是输出一个反斜杠。
+
+\subsection{变量}
+
+变量顾名思义，就是可以变的量。一个变量肯定要有名字，然后要有一个值。这就像是我们的考试成绩，有一个叫做“数学成绩”的变量，这次可以是120，下次可以是130。在c语言中，我们这样声明变量：$type\quad{}name$，啥意思呢，比如我们要声明数学成绩（math\_grade），那么就可以这样写
+
+\begin{lstlisting}[language=C]
+    int math_grade; 
+\end{lstlisting}
+
+这里的int是整数的意思，还有其它类型（如小数）我们之后会讲到。所以这行代码的意思就是，我们声明了一个叫做math\_grade的变量，它是一个整数。接下来就要给它赋值了，在大部分计算机语言中，赋值号都是=，比如数学成绩是120，那么就可以写
+
+\begin{lstlisting}[language=C]
+    math_grade = 120;
+\end{lstlisting}
+
+这段代码的意思就是给math\_grade赋予120这个值。也即，我们将赋值号右边的值给了左边的变量。我们强调是将右边的值赋给左边，说明了这不是数学中的等号，它不意味着左右两边相等，也不能交换左右两边的位置。
+
+现在我们的main.c应该是这样的
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int math_grade;
+        math_grade = 120;
+
+        return 0;
+    }
+\end{lstlisting}
+
+第四行是声明变量，第五行是给变量赋值。如果我们在声明变量时就知道它要赋什么值，那么就可以把声明和赋值写在一起
+
+\begin{lstlisting}[language=C]
+    int math_grade = 120;
+\end{lstlisting}
+
+我们可以这样打印整数变量
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int math_grade;
+        math_grade = 120;
+
+        printf("%d\n", math_grade); 
+
+        return 0;
+    }
+\end{lstlisting}
+
+运行程序，输出了120。我们目前只需要这样理解：引号内的\%d是一个占位符，引号后面的math\_grade就是用来替换占位符的。因此我们就可以实现一些更复杂的输出了，比如
+
+\begin{lstlisting}[language=C]
+    printf("数学成绩为：%d\n", math_grade); 
+\end{lstlisting}
+
+现在拓展一下，如果我们定义了数学、语文和英语三门课的成绩，也即
+
+\begin{lstlisting}[language=C]
+    int math_grade = 120;
+    int chinese_grade = 100;
+    int english_grade = 140;
+\end{lstlisting}
+
+如何输出呢？我们只需要写三个占位符即可，也就是
+
+\begin{lstlisting}[language=C]
+    printf("数学成绩为：%d，语文成绩为：%d，英语成绩为：%d\n", math_grade, chinese_grade, english_grade); 
+\end{lstlisting}
+
+想象一下，假如我们定义了很多变量，有数学期中成绩，数学期末成绩，语文小测成绩，语文期末成绩……我们在代码里看这么多东西就头大，所以我们希望能用自然语言给它们加上注释，便于我们理解代码。在c语言中，有两种形式的注释：单行注释和多行注释。
+
+单行注释是两个斜杠（//），这两个斜杠之后就可以随便写字了，比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int math_grade;  // 声明数学成绩
+        math_grade = 120;  // 给数学成绩赋值120
+
+        printf("%d\n", math_grade);   // 打印数学成绩
+
+        return 0;
+    }
+\end{lstlisting}
+
+多行注释的语法是/* */，在这之间可以随便写字，比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        /*
+            该程序的展示了变量的声明与赋值语法，
+            以及使用printf打印整型变量的方法
+        */
+        int math_grade;  // 声明数学成绩
+        math_grade = 120;  // 给数学成绩赋值120
+
+        printf("%d\n", math_grade);   // 打印数学成绩
+
+        return 0;
+    }
+\end{lstlisting}
+
+有了变量，肯定也要有常量。在c语言中，我们使用\#define来声明常量。比如，圆周率$\pi$就是一个常量，我们可以这样在c语言中定义圆周率
+
+\begin{lstlisting}[language=C]
+    #define PI 3 
+\end{lstlisting}
+
+也即，定义常量的语法是\#define 常量名 常量的值。
+
+我们定义圆周率是3，是一个整数，因此可以按照上文的方法将其打印出来
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    #define PI 3
+
+    int main() {
+        printf("圆周率的近似值是%d\n", PI);
+
+        return 0;
+    }
+\end{lstlisting}
+
+你可能觉得奇怪，为什么定义常量的语法和变量区别这么大呢？既不需要写赋值号，也不需要标明类型。实际上，\#define是一个宏，在c语言中，程序被编译运行前，会有一个叫做预处理器的程序将所有宏替换为对应的值，也就是说（在只考虑\#define宏的情况下），上面的代码经过预处理器会变成这样
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        printf("圆周率的近似值是%d\n", 3);
+
+        return 0;
+    }
+\end{lstlisting}
+
+发现了吗？我们定义的常量PI被直接替换成了它的值$3$，既然是直接替换，就相当于是写死在了程序里，没法修改，所以就是常量了。实际上，我们行首的\#include也是一个宏，它的效果和\#define类似。关于宏和预处理的知识我们在之后会学习到。
+
+\subsection{scanf函数}
+
+scanf函数是scan function，它用来从终端获取输入的文本。这个东西涉及到一些我们还没有学到的知识，但是我们后续的学习很难离开它，因此需要在这里对其简单介绍，我们目前不需要了解它的原理，会用就可以。
+
+首先，打开visual stdio，在main.c中输入一段这样的代码
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int num;  // 用于储存用户输入的数字
+        printf("请输入一个整数");  // 提示用户进行输入
+        scanf("%d", &num);  // 将输入的数字保存在变量num中，注意不要忘了num前的&
+
+        printf("你输入的整数是%d", num);
+
+        return 0;
+    }
+\end{lstlisting}
+
+点击运行，出现了意料之外的情况
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.4\textheight]{images/1标准输入报错.png}
+\end{figure}
+
+这个窗口的意思是我们的代码有问题，过不了编译。在实际编程开发时，由于我们很难做到一次就尽善尽美，所以常常会遇到这个窗口。还好代码的试错成本是很低的，我们只需要着手去修补自己的代码即可。我们点击否，注意到visual stdio最下面出现了这样的文本
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth, height=0.2\textheight]{images/1ide错误提示.png}
+\end{figure}
+
+带有黄色警示标志的叫做警告（warning），它的意义是代码可能有一些不符合规范的地方，需要修改，但是不改也能正常运行。而红色标志的叫做错误（error），它的意义是这里的代码完全有问题，过不了编译，程序运行不了。我们必须要消除代码中所有的error，也要尽可能消除所有的warning。
+
+我们开始着手消灭这个error，它的提示信息说“This function or variable may be unsafe. Consider using scanf\_s instead. To disable deprecation, use \_CRT\_SECURE\_NO\_WARNINGS. See online help for details.”
+
+翻译成中文，就是“这个函数或者变量可能不安全。考虑使用scanf\_s替代。若要取消废弃（检查），使用\_CRT\_SECURE\_NO\_WARNINGS。详细信息见在线帮助。”。它的意思就是说，我们用的这个scanf函数不安全，已经废弃了，要么我们换用scanf\_s，要么我们加上\_CRT\_SECURE\_NO\_WARNINGS来强行使用废弃的函数。
+
+实际上，scanf由于设计不当，会有缓冲区溢出（buffer overflow）的风险，所以我们确实不应该使用它。但是呢，只有我们使用的visual stdio会报这个错误，其它ide不会强制要求你换，而且大部分的c语言试题和c语言教程仍在使用scanf，所以我们采取强制使用废弃函数的方法来消除这个error。
+
+在visual stdio的项目右键，点击属性，点击“C/C++”，点击“预处理器”，点击“预处理器定义”，随后点击右边出现的小箭头，点击“<编辑>”，单独一行输入“\_CRT\_SECURE\_NO\_WARNINGS”，点击“确定”即可。
+
+此时我们再运行代码，终端首先变成这样
