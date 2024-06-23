@@ -16,7 +16,7 @@
 
 点击“本地Windows调试器”，将会出现类似于这样的界面
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, height=0.4\textheight]{images/1HelloWorld结果.png}
 \end{figure}
@@ -67,7 +67,7 @@
 
 运行结果是：
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, height=0.4\textheight]{images/1换行符输出.png}
 \end{figure}
@@ -131,7 +131,7 @@
 
 我们命名的math\_grade有个特点：单词全部小写，单词之间使用下划线\_连接。这种命名方式叫做蛇形命名法（snake\_case）。至于我们上面提到的mathGrade也是一种命名法，叫做小驼峰命名法（camelCase）。命名法和一些其它规则构成了代码风格（code style），本讲义遵循Google代码规范，也推荐各位使用这套代码规范。各位在阅读此讲义时应该注意示例代码的代码风格，自己写代码时要模仿示例代码的风格。不过，如果各位是参与到他人的项目，自然是要按照他人已有的标准来写代码。
 
-总结：变量命名使用蛇形命名，即connect\_every\_lowercase\_word\_by\_underscore
+代码风格提示：变量命名使用蛇形命名，即connect\_every\_lowercase\_word\_by\_underscore
 
 我们可以这样打印整数变量
 
@@ -180,6 +180,7 @@
         math_grade = 120;  // 给数学成绩赋值120
 
         printf("%d\n", math_grade);   // 打印数学成绩
+        // 单行注释也可以单独成行
 
         return 0;
     }
@@ -203,6 +204,17 @@
         return 0;
     }
 \end{lstlisting}
+
+需要注意的是，多行注释不能这样写
+
+\begin{lstlisting}[language=C]
+    int math_grade;  /* 声明数学成绩 
+    math_grade = 120;  给数学成绩赋值 */
+\end{lstlisting}
+
+这样的话，第二段代码就被包括在了注释内，从而无法执行。
+
+那么什么时候用单行注释，什么时候用多行注释呢？如果写注释的目的是对一行或几行代码做简单的说明，那么就用单行注释；假如注释的目的是要阐释一个复杂的原理（比如一段算法的数学原理或工程背景）或者解释一个函数（接下来会讲函数是什么）的功能，那么就应该使用多行注释。
 
 有了变量，肯定也要有常量。在c语言中，我们使用\#define来声明常量。比如，圆周率$\pi$就是一个常量，我们可以这样在c语言中定义圆周率
 
@@ -240,6 +252,8 @@
 
 发现了吗？我们定义的常量PI被直接替换成了它的值$3$，既然是直接替换，就相当于是写死在了程序里，没法修改，所以就是常量了。实际上，我们行首的\#include也是一个宏，它的效果和\#define类似。关于宏和预处理的知识我们在之后会学习到。
 
+代码风格提示：命名常量，一般采用大驼峰命名法（CamelCase），也即所有单词都连在一起，每个单词的首字母大写。如CapitalizeTheFirstLetterOfEachWord
+
 \subsection{scanf函数}
 
 scanf函数是scan function，它用来从终端获取输入的文本。这个东西涉及到一些我们还没有学到的知识，但是我们后续的学习很难离开它，因此需要在这里对其简单介绍，我们目前不需要了解它的原理，会用就可以。
@@ -262,19 +276,19 @@ scanf函数是scan function，它用来从终端获取输入的文本。这个�
 
 点击运行，出现了意料之外的情况
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, height=0.4\textheight]{images/1标准输入报错.png}
 \end{figure}
 
 这个窗口的意思是我们的代码有问题，过不了编译。在实际编程开发时，由于我们很难做到一次就尽善尽美，所以常常会遇到这个窗口。还好代码的试错成本是很低的，我们只需要着手去修补自己的代码即可。我们点击否，注意到visual stdio最下面出现了这样的文本
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth, height=0.2\textheight]{images/1ide错误提示.png}
 \end{figure}
 
-带有黄色警示标志的叫做警告（warning），它的意义是代码可能有一些不符合规范的地方，需要修改，但是不改也能正常运行。而红色标志的叫做错误（error），它的意义是这里的代码完全有问题，过不了编译，程序运行不了。我们必须要消除代码中所有的error，也要尽可能消除所有的warning。
+带有黄色警示标志的叫做警告（warning），它的意义是代码可能有一些不符合规范的地方，需要修改，但是不改也能运行。而红色标志的叫做错误（error），它的意义是这里的代码完全有问题，过不了编译，程序运行不了。我们必须要消除代码中所有的error，也要尽可能消除所有的warning。
 
 我们开始着手消灭这个error，它的提示信息说“This function or variable may be unsafe. Consider using scanf\_s instead. To disable deprecation, use \_CRT\_SECURE\_NO\_WARNINGS. See online help for details.”
 
@@ -286,14 +300,14 @@ scanf函数是scan function，它用来从终端获取输入的文本。这个�
 
 此时我们再运行代码，终端首先变成这样
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, height=0.3\textheight]{images/1scanf首次.png}
 \end{figure}
 
 此时我们输入一个数字，点击回车，出现了这样的效果
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, height=0.3\textheight]{images/1scanf完成.png}
 \end{figure}
@@ -325,9 +339,9 @@ scanf函数是scan function，它用来从终端获取输入的文本。这个�
 
 这样我们就找到了规律，scanf的引号内的部分就像是一个模板，只有输入与模板对应，函数才正常运行。不信的话，我们可以试试在修改后的代码输入120 130 140，会得到这样的结果
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, height=0.3\textheight]{images/1scanf出错.png}
 \end{figure}
 
-非常抽象是不是？这是因为我们的输入没有符合模板的需求，模板需要我们在每两个成绩间使用英语逗号分割，我们用的却是空格，这种情况被称作未定义行为（undefined behavior），这是c语言中比较难以预测的一种的错误，我们后续会详细讲解。不知道各位记不记得，我们在解决那个error时，留了个warning？它说我们没有使用scanf的返回值，这个“返回值”就是用来解决这个问题的，我们学习到函数时会专门提到。
+非常抽象是不是？你知道更抽象的是什么吗？假如我们使用其它编译器，那么会得到不同的结果\footnote{类似的一段代码，以120 130 140作为输入，64位电脑，处理器intel ultra9，在win11，msvc编译下运行结果为120, -858993460, -858993460；ubuntu，gcc编译下结果为120, 4096, 0；ubuntu，clang编译下结果为120, 0, 4096}。这是因为我们的输入没有符合模板的需求，模板需要我们在每两个成绩间使用英语逗号分割，我们用的却是空格，这种情况被称作未定义行为（undefined behavior），这是c语言中比较难以预测的一种的错误，我们后续会详细讲解。不知道各位记不记得，我们在解决那个error时，留了个warning尚未处理？它说我们没有使用scanf的返回值，这个“返回值”就是用来解决这个问题的，我们学习到函数时会专门提到。
