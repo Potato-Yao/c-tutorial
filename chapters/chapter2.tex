@@ -51,10 +51,170 @@ short的范围是$[-32768, 32767]$，而unsigned short的范围是$[0, 65535]$�
 
 那么为什么无论使用场景都不用无符号呢？首先，无符号的最大值和最小值也是连接在一起的，这种情况更刺激：假如一个学校有65536名学生，我们使用unsigned short来编号，那么最后一位和第一位的编号是一样的，就没办法区分这二人了。其次，我们有时设计的一些复杂算法可能出错，若算法应只输出正值却输出了负值，那么说明算法一定出了问题，假如我们使用无符号类型，就无法这样判断了。
 
-小数在计算机科学一般称作浮点型，常用的是double（双精度浮点型）。我们可以这样定义一个浮点变量
+为什么不同整型有不同取值范围呢？这实际上与其占用的比特数有关。c语言提供了sizeof运算符，用于获取一个数据类型占用的比特数（比特数是一个整型）。比如，我们可以这样获取int所占用的比特数
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int s = sizeof(int);
+        printf("%zd\n", s);
+        
+        return 0;
+    } 
+\end{lstlisting}
+
+输出结果是4。类似的我们可以知道其它整型的大小
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        printf("%zd\n", sizeof(short));
+        printf("%zd\n", sizeof(int));
+        printf("%zd\n", sizeof(long));
+        printf("%zd\n", sizeof(long long));
+
+        printf("%zd\n", sizeof(unsigned short));
+        printf("%zd\n", sizeof(unsigned int));
+        printf("%zd\n", sizeof(unsigned long));
+        printf("%zd\n", sizeof(unsigned long long));
+        
+        return 0;
+    }
+\end{lstlisting}
+
+我们发现，占用比特数越大，储存数字的范围越大。这是一个定性的结果，我们在更深层次的课程会详细解释储存数据的原理、取值范围如何计算。
+
+小数在计算机科学一般称作浮点型，常用的是double（双精度浮点型），还有一种叫做float，这个用法与double一致，但是我们推荐使用double。我们可以这样定义一个浮点型变量
 
 \begin{lstlisting}[language=C]
     double a = 1.23;  // 小数点是英文句号
+\end{lstlisting}
+
+如何打印浮点数呢？打印double的占位符是\%lf，打印float的占位符是\%f，比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        double a = 3.14;
+        printf("%lf\n", a);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+输出结果是3.140000。默认的\%lf为我们保留了六位小数，如果我们把a改成3.1415926，输出结果是3.141593，不仅保留了六位小数，还做了四舍五入。实际上，\%f也可以用在打印double上，但是使用scanf时就必须要用\%lf了。因此我们推荐在处理double时不要混用，一律使用\%lf。
+
+如果小数太长，我们只需要显示前两位，我们就可以这样使用占位符
+
+\begin{lstlisting}[language=C]
+    printf("%.2lf\n", a);
+\end{lstlisting}
+
+它的意思是要保留小数点后两位数字，还是很形象的吧？假如我们这么写，并且把a的值改成3.14
+
+\begin{lstlisting}[language=C]
+    printf("%5.2lf\n", a);
+\end{lstlisting}
+
+输出就变成了“ 3.14”，注意多出一个空格。对于\%a.bf和\%a.blf，小数点之前的数字代表最少要输出多少位（注意小数点也算一位），之后的数字代表要输出多少位小数。如果要求最少输出位数比数字本身有的位数还多，那就会在最前面输出空格来补齐差距。
+
+还记得字面量吗？数字42是字面量，更具体地说，它是整型字面量；数字3.14是浮点型字面量；“xyz”是字符串字面量（字符串在后续讲到）。总之，字面量可以更精确地描述为类型+字面量。
+
+整型和浮点型都具有加减乘除四种数值运算，整型还有取模运算。一个整型可以与另一个整型做数值运算，也可以与一个整型字面量数值运算，两个整型字面量也可以进行运算。加减乘除的符号分别是$+-*/$，就像数学的写法一样，在运算符两边写参与运算的数字。像是算一加一就是$1+1$，算二乘二就是$2*2$。另外需要特别说明，赋值号只在赋值号右边的运算都完成后才会把右边的值赋给左边。举个例子
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 1;  // a和b都是整型变量
+        int b = 2;
+        int c = a + b;  // 整型变量进行数值运算，得到的值赋给了c。注意：只有在赋值号右边的运算完成后，赋值号才进行赋值
+        printf("%d\n", c);  // 输出结果是3
+
+       	int d = 1;
+        int e = d * 4;  // e由一个整型变量和整型字面量计算得到
+        printf("%d\n", e);  // 输出结果是4
+
+        int f = 2 - 2;  // f由两个整型字面量计算得到
+        printf("%d\n", f);   // 输出结果是0
+        
+        return 0;
+    }
+\end{lstlisting}
+
+最需要强调的是除法运算。整型的运算只能算出整型，所以假如参与除法运算的两个数不能整除怎么办？我们试一试
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 2;
+        int b = 3;
+        int c = a / b;
+        printf("%d\n", c);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+照理来说，$2/3$的结果是0.666循环，但是这段代码的输出是0。这说明，整型的除法在无法整除的时候，会截取整数部分作为运算结果。另外考虑一个问题，以0作为除数会怎么样？0作为除数是没有意义的，在c语言中以0为除数的后果就会导致未定义行为。
+
+除此以外，整型还有取模运算，也就是获取两数相除的余数。取模运算的符号是\%。比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 20;
+        int b = 3;
+        int c = a % b;
+        printf("%d\n", c);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+输出结果是2，说明20/3的结果余2。这个运算非常重要，比如我们可以通过一个数与2的余数是否为0来判断这个数是否为偶数：如果余数为0，说明这个数能被2整除，那就是偶数，反之就是奇数。
+
+c语言中算数是有优先级的，与数学一样，即从左到右，先算乘除后算加减，括号可以改变运算顺序。比如
+
+\begin{lstlisting}[language=C]
+    int a = 4 * 2 + 2;
+	int b = 4 * (2 + 2);
+\end{lstlisting}
+
+a的值是10，b的值是16。注意，如果你需要套多层括号来改变运算顺序，都使用圆括号（即()）而不要使用方括号和花括号。
+
+我们刚刚提到了赋值号是先对右边进行运算再赋给左边，所以我们实际上可以写出这样的东西
+
+\begin{lstlisting}[language=C]
+    int a = 1;
+    a = a + 1;
+\end{lstlisting}
+
+首先对右边计算，是1+1=2，随后将2赋给了a，此时a就变成2了。当然了，对于其它几种数值运算也能这样使用。
+
+像上面这样的运算是很常用的，但是每次都写成那样岂不是很麻烦？c语言提供了一种简化语法
+
+\begin{lstlisting}[language=C]
+    int a = 1;
+    a += 1;  // 等价于 a = a + 1;
+    // 类似的，a *= 2就等价 a = a * 2，诸如此类
+\end{lstlisting}
+
+在后续学习到流程控制时，我们需要常常对一个整型变量进行加一或者减一的运算，此时哪怕是上面的简化语法也太累赘了，因此c语言设计了自增运算符和自减运算符，用于对整型进行加一或减一的操作（其实对浮点型也适用，不过最常用于整型）。
+
+自增运算符和自减运算符都分为前置和后置两种
+
+\begin{lstlisting}[language=C]
+    int a = 1;
+    ++a;  // 前置自增运算符
+    a++;  // 后置自增运算符
+    --a;  // 前置自减运算符
+    a--;  // 后置自减运算符
 \end{lstlisting}
 
 
