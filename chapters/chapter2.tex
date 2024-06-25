@@ -92,6 +92,12 @@ short的范围是$[-32768, 32767]$，而unsigned short的范围是$[0, 65535]$�
     double a = 1.23;  // 小数点是英文句号
 \end{lstlisting}
 
+如果给浮点型赋一个整数（比如赋1），我们习惯这样赋值
+
+\begin{lstlisting}[language=C]
+    double b = 1.0;  // 也即要加上.0
+\end{lstlisting}
+
 如何打印浮点数呢？打印double的占位符是\%lf，打印float的占位符是\%f，比如
 
 \begin{lstlisting}[language=C]
@@ -179,6 +185,59 @@ short的范围是$[-32768, 32767]$，而unsigned short的范围是$[0, 65535]$�
 
 输出结果是2，说明20/3的结果余2。这个运算非常重要，比如我们可以通过一个数与2的余数是否为0来判断这个数是否为偶数：如果余数为0，说明这个数能被2整除，那就是偶数，反之就是奇数。
 
+浮点数的加减乘除运算语法和整型的是一致的，不过浮点数自然没有取模运算。我们刚刚尝试整型的除法运算，发现运算结果是截取了商的整数部分，那浮点型会怎样呢？
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        double a = 2.0;
+        double b = 3.0;
+        double c = a / b;
+        printf("%lf\n", c);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+运行，发现结果是0.666657，说明浮点型的运算结果也是浮点型。实际上，整型与浮点型运算的结果也是浮点型，常见的是使用一个浮点型除以一个整型字面量，比如我们这样求三个数的平均值
+
+\begin{lstlisting}[language=C]
+    double a = 2.0;
+    double b = 3.0;
+    double c = 4.0;
+
+    double avg = (a + b + c) / 3;
+\end{lstlisting}
+
+在c语言中，不同的数据类型可以进行转换。比如我们可以这样将一个整型转成浮点型
+
+\begin{lstlisting}[language=C]
+    int a = 1;
+    double b = (double) a;  // b = 1.0，需要转成什么类型就在括号里写什么类型
+\end{lstlisting}
+
+这样，就将a转换成了一个浮点型变量并赋给了b。注意，转换的意义是生成了一个浮点型变量，而不是将a本身变成了浮点型。
+
+一样的，我们可以把浮点型转换成整型。但是这样就有一个问题，比如我们将4.5转成整型，结果是多少呢？我们写一段代码试试
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        double a = 4.5;
+        int b = (int) a;
+
+        printf("%d\n", b);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+结果是4。由此我们发现，在浮点型转换为整型时，会直接截去小数点。
+
+我们可以想到，浮点型能储存的数字比整型多，因此整型向浮点型转化是一定没有问题的，但是浮点型转整型可能会丢失小数点后的信息。也是由此，整形转浮点型是不需要像上面那样明确写出来的，编译器会自动帮我们进行转换，这叫做隐式转换。而浮点向整型的转换是需要我们按照上面的方法手动进行的，叫做显式转换。
+
 c语言中算数是有优先级的，与数学一样，即从左到右，先算乘除后算加减，括号可以改变运算顺序。比如
 
 \begin{lstlisting}[language=C]
@@ -217,4 +276,111 @@ a的值是10，b的值是16。注意，如果你需要套多层括号来改变�
     a--;  // 后置自减运算符
 \end{lstlisting}
 
+无论是哪种自增运算符，都能使变量的值加一。无论是哪种自减，都能使值减一。
 
+前置和后置运算符的区别在于将它们与赋值并用的时候
+
+\begin{lstlisting}[language=C]
+    int a = 1;
+    // 下面两段代码不能放在一起，这里仅作为演示
+    int j = ++a;  // j = 2
+    int j = a++;  // j = 1
+\end{lstlisting}
+
+当赋值运算和前置运算符并用时，会先自增后赋值，因此j的值就是2。当与后置运算符并用时，会先赋值后自增，所以j获得的是原来的值1。
+
+记不住怎么办？记不住就老老实实写成这样
+
+\begin{lstlisting}[language=C]
+    int a = 1;
+    ++a;
+    int j = a;
+\end{lstlisting}
+
+另外，虽然使用上面这样的写法就无需考虑使用前置还有后置运算符了，但是笔者推荐养成使用前置运算符的习惯，这样程序的效率更高。这是从C++中获取的经验，不多过解释了。（虽然对于Java等语言来说这两种运算符是完全等价的，但是对于C和C++来说还是有区别）
+
+最后，我们写一个实例：让用户输入三个整数，计算它们的平均值并返回。
+
+对于这种实战型的题目，我们的一般方法就是先明确设计需求，然后大概确定技术要点，最后进行开发即可。
+
+对于我们这个实例，设计需求就是：一，获取三个整数；二，计算三个数字的平均数并输出。那么这涉及什么技术呢？对于第一个需求，需要掌握scanf的用法，对于第二个，需要掌握变量的数值运算和printf的用法。我们都学过，所以开始编程吧。
+
+首先，我们创建新的main.c，输入必要的代码
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        return 0;
+    }
+\end{lstlisting}
+
+我们首先处理第一个需求。获取三个整数，这就需要我们把它们储存起来，因此先定义三个整型变量
+
+\begin{lstlisting}[language=C]
+    int a;
+    int b;
+    int c;
+\end{lstlisting}
+
+接下来就是要获取三个数字并进行储存了。我们可以写成这样
+
+\begin{lstlisting}[language=C]
+    scanf("%d %d %d", &a, &b, &c);
+\end{lstlisting}
+
+这样，用户只需要按照模板进行输入，程序就可以正常工作。可是，用户该怎么知道这个程序是干什么的，他应该怎么输入呢？因此，我们在scanf前加一个printf来打印基本信息。这样，程序就改成了
+
+\begin{lstlisting}[language=C]
+    printf("欢迎使用平均数计算器！请按照a b c的格式输入三个整数\n");
+    scanf("%d %d %d", &a, &b, &c);
+\end{lstlisting}
+
+在开发的过程中，应该开发一部分就进行一次测试。因此我们此时可以点击运行试试。发现出现了我们想要的界面，按照模板进行输入，程序以退出代码0退出。退出代码0是程序正常完成的标志。由此完成了第一个需求。
+
+接下来我们需要计算平均值了，定义一个变量avg作为平均值，可是它应该是什么类型呢？我们想，三个整数的平均数不一定是一个整数，所以要用浮点型。因此就定义了
+
+\begin{lstlisting}[language=C]
+    double avg;
+\end{lstlisting}
+
+接下来就要计算平均数了，于是我们写下这样的代码
+
+\begin{lstlisting}[language=C]
+    double avg = (a + b + c) / 3;
+\end{lstlisting}
+
+然后输出
+
+\begin{lstlisting}[language=C]
+    printf("平均数为：%lf\n", avg); 
+\end{lstlisting}
+
+大功告成！我们运行程序，试一下效果。首先我们输入1 2 3，发现输出是2.000000，是我们预期的结果！那我们再试试1 2 4，发现结果不对了，怎么还是2.000000？
+
+这说明，我们的代码出了错。回顾一下，输入部分的代码已经做了测试，输出数字也不会有问题，看来就是计算平均数这步代码出错了。那么为什么呢？注意，abc三个变量实际都是整型，它们的和是一个整型，除以3是整型的数值运算，得到的结果自然也是整型，也就是2。这个结果隐式转化成了浮点型，因此输出结果是2.000000。也就是说，我们的问题在于是使用整型进行运算的。如果我们把代码改成这样
+
+\begin{lstlisting}[language=C]
+    double avg = (double)(a + b + c) / 3;
+\end{lstlisting}
+
+这样，三个变量求和的结果会强制转换成浮点型，使用浮点型的运算算出的才是正确结果。修改后我们再次运行代码，发现这次的输出2.333333是正确的。这样我们就完成了整个项目的设计，完整代码如下
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a;
+        int b;
+        int c;
+
+        printf("欢迎使用平均数计算器！请按照a b c的格式输入三个整数\n");
+        scanf("%d %d %d", &a, &b, &c);
+
+        double avg = (double)(a + b + c) / 3;
+
+        printf("平均数为：%lf\n", avg);
+        
+        return 0;
+    }
+\end{lstlisting}
