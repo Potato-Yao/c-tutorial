@@ -1,0 +1,184 @@
+\section{流程控制 循环语句}
+
+\subsection{while语句}
+
+我们经常遇到这样的场景：需要一直做某个任务直到达到某个条件为止。在c语言中就有这样的设计，即循环语句。第一种循环是while语句，它的语法是while (条件) 下属语句。如果条件满足，就进入下属语句，下属语句执行完后程序会重新判断条件，如果还满足就再进入下属语句，直到条件不再满足为止。比如，我们若想要打印1到100，就可以这样做
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 1;
+        while (a <= 100) {
+            printf("%d\n", a);
+        }
+
+        return 0;
+    }
+\end{lstlisting}
+
+我们首先定义了一个变量a为1，随后定义了一个循环语句，它打印a的值，直到a为100为止。这样，当a小于等于100时，下属语句就会一直执行，输出a的值，当a达到100后，循环退出，程序结束。看上去很完美不是？但是，假如我们运行这段代码（不建议大家尝试），你会发现电脑一直在输出1（有些电脑甚至会卡死）。
+
+这是为什么？仔细想想，我们发现在循环的过程中，a的值始终是1，没有增长过，因此循环一直在执行而不会终止。所以，我们要在循环里加一条语句来使a增长。while语句改成了
+
+\begin{lstlisting}[language=C]
+    while (a <= 100) {
+        printf("%d\n", a);
+        ++a;
+    }
+\end{lstlisting}
+
+再次运行，这次结果正确了。
+
+我们说，流程控制语句是可以嵌套的，我们可以把if和while语句嵌套在一起，比如，可以这样输出1到100之间的全部偶数
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 1;
+        while (a <= 100) {
+            if (a % 2 == 0) {
+                printf("%d\n", a);
+            }
+            ++a;
+        }
+        
+        return 0;
+    }
+\end{lstlisting}
+
+c语言提供了continue和break关键字，前者可以退出一次循环，后者用于直接退出整个循环。比如，上面的例子可以改写成
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 1;
+        while (a <= 100) {
+            if (a % 2 != 0) {
+                ++a;
+                continue;
+            }
+            printf("%d\n", a);
+            ++a;
+        }
+        
+        return 0;
+    }
+\end{lstlisting}
+
+这是什么意思呢？每次在while下属语句时，都会首先判断a是不是奇数，如果是就进入if的下属语句，a自增，随后退出本次循环，因此下面的printf是不会被执行的。
+
+再比如，假如我们有一个需求：输出一个数字，打印从1到这个数字之间的所有数字，如果打印到9就不再打印，那么就可以这样写
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 1;
+        int b;
+        printf("请输入一个大于1的整数\n");
+        scanf("%d", &b);
+
+        while (a <= b) {
+            if (a == 9) {
+                break;
+            }
+            
+            printf("%d\n", a);
+            ++a;
+        }
+        
+        return 0;
+    }
+\end{lstlisting}
+
+在循环的过程中，如果a增长到了9，就会进入if的下属语句，从而退出循环。这两个例子其实并没有体现出continue和break的真正作用，我们在之后的实战学习中会领略到这二者的真正作用。
+
+值得注意的是，如果我们嵌套了多层循环语句，那么continue和break作用于最内层的循环。
+
+有了循环的知识，我们就可以试着编写一个程序，它可以不间断地接受输入，直到输入了某个特定的退出符号为止。比如，我们可以编写一个程序来计算若干个正整数的平均数，如果输入非正数就退出循环。
+
+为了实现这个程序，我们还是要遵循设计程序的三个步骤。首先确定需求：一，程序要能够不间断地输入，我们可以考虑使用while语句
+
+\begin{lstlisting}[language=C]
+    while (条件) {
+        scanf("%d", &a);
+    }
+\end{lstlisting}
+
+现在出现了两个问题：第一，while的条件应该是什么？第二，如果把输入结果存放在一个变量里，那么下一次的结果不就覆盖上一次的了？
+
+第一个问题实际上就是我们的第二个需求，也即输入到非正数就退出，我们可以使用break语句，把程序写成这样
+
+\begin{lstlisting}[language=C]
+    while (条件) {
+        scanf("%d", &a);
+        if (a <= 0) {
+            break;
+        }
+    }
+\end{lstlisting}
+
+如果这样，我们就不需要为循环设置条件了，因为我们的退出条件写在了循环内，所以代码就改成了
+
+\begin{lstlisting}[language=C]
+    while (1) {
+        scanf("%d", &a);
+        if (a <= 0) {
+            break;
+        }
+    }
+\end{lstlisting}
+
+条件是1，意味着永远成立，因此这个循环如果内层没有退出条件的话，它会永远执行下去（也就是所谓的死循环）。第二个问题的解决其实很简单，反正我们最终的目的是要求和，我们可以这样写
+
+\begin{lstlisting}[language=C]
+    int sum = 0;
+    int a;
+
+    while (1) {
+        scanf("%d", &a);
+        if (a <= 0) {
+            break;
+        }
+        sum += a;
+    }
+\end{lstlisting}
+
+什么意思？我们每次输入的数字，都会被加到这个变量sum中，这样，我们最终得到的就是所有输入的数字的和了。为什么这行求和要写到if语句后，而不是写成一个else语句呢？也就是这样
+
+\begin{lstlisting}[language=C]
+    while (1) {
+        scanf("%d", &a);
+        if (a <= 0) {
+            break;
+        } else {
+            sum += a;
+        }
+    }
+\end{lstlisting}
+
+这样当然也是可以的，它意味着：如果进入if的下属语句，就不会进入else的，反之如果进入else的下属语句就进入不了if的，这符合我们的需求。但是我们发现，在修改前的代码，假如进入if的下属语句就会退出循环，也执行不到求和的那一行，假如进入了求和的一行，就说明一定没有进入if，因此效果是一样的。
+
+像上面这样，如果添加else语句与否的执行效果相同，我们建议不要使用else，这样就减少了嵌套的数量，增加了代码的可读性。因为，我们如果阅读的是这样一段代码
+
+\begin{lstlisting}[language=C]
+    if (a <= 0) {
+        break;
+    } else {
+        sum += a;
+    }
+\end{lstlisting}
+
+我们在阅读else下的代码时就要时刻惦记着：这是if语句的另一个情况，它代表了a是大于零的。我们每次都要想着if语句的条件才能对else的代码有正确的理解。但是如果写成这样
+
+\begin{lstlisting}[language=C]
+    if (a <= 0) {
+        break;
+    }
+    sum += a;
+\end{lstlisting}
+
+我们就可以理解为：a小于等于零的情况在前面已经处理过了，我们断定下面的代码中a是大于零的，这段if语句就像是一个卫兵，向我们保证后面代码中a的取值范围，因此这样的，在核心业务逻辑代码前用来处理异常情况的代码被称做卫语句。这样就减少了阅读时的负担，这对于修改代码和理解代码都非常重要。实际上，我们一般推荐嵌套不要超过三层，我们在后期会讲到如何减少嵌套的数量。
