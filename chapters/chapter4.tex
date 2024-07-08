@@ -182,3 +182,194 @@ c语言提供了continue和break关键字，前者可以退出一次循环，后
 \end{lstlisting}
 
 我们就可以理解为：a小于等于零的情况在前面已经处理过了，我们断定下面的代码中a是大于零的，这段if语句就像是一个卫兵，向我们保证后面代码中a的取值范围，因此这样的，在核心业务逻辑代码前用来处理异常情况的代码被称做卫语句。这样就减少了阅读时的负担，这对于修改代码和理解代码都非常重要。实际上，我们一般推荐嵌套不要超过三层，我们在后期会讲到如何减少嵌套的数量。
+
+如果不这么写呢？我们可以通过使用while的条件来控制循环的退出。即代码改成
+
+\begin{lstlisting}[language=C]
+    while (scanf("%d", &a), a > 0) {
+        sum += a;
+    }
+\end{lstlisting}
+
+这是什么意思？这段代码的核心是while括号内的那一行，这里涉及到了一个叫做逗号运算符的知识，即，在作为流程控制语句条件的语句里，我们可以用逗号连接几个语句，这几个语句依次执行，但是只有最后一个作为条件判断。就拿我们这段代码来说，我们使用逗号连接了scanf和a的大小判断。首先执行scanf，将输入的值赋给a，然后执行大小判断，因为这是最后一个语句，它的判断结果就作为while的条件判断了。逗号运算符是c语言一个很实用的知识，可以在不失去阅读性的情况下简化我们的代码。当然，我们一般不会在这里连接多个语句，一般就是像上面这样连接一个，否则代码过于臃肿。
+
+现在我们有了所有数的总和，接下来要求平均值，这就需要我们知道具体有几个数，所以我们应该定义一个变量用来储存已经求了几个数的和。那么它应该写在哪里呢？我们记录的数的个数，是用来求和的数的个数，因此应该和求和写在一块，也就是
+
+\begin{lstlisting}[language=C]
+    int sum = 0;
+    int count = 0;
+    int a;
+
+    while (1) {
+        scanf("%d", &a);
+        if (a <= 0) {
+            break;
+        }
+        sum += a;
+        ++count；
+    }
+\end{lstlisting}
+
+或者使用逗号运算符的写法
+
+\begin{lstlisting}[language=C]
+    int sum = 0;
+    int count = 0;
+    int a;
+
+    while (scanf("%d", &a), a > 0) {
+        sum += a;
+        ++count;
+    }
+\end{lstlisting}
+
+最后就要计算并打印平均数了。别忘了，整数的平均值可以是小数，所以我们要定义一个浮点型来储存结果。另外，要先把sum转成浮点型再计算，这在之前就已经讲过原因了。因此，我们最终的程序是
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int sum = 0;
+        int a;
+        int count = 0;
+
+        while (scanf("%d", &a), a > 0) {
+            sum += a;
+            ++count;
+        }
+
+        double re = (double) sum / count;
+        printf("%lf\n", re);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+当然了，如果是我们自己使用，那么可以增添一些提示性的文本，比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int sum = 0;
+        int a;
+        int count = 0;
+
+        printf("请输入连续若干个正整数，每输入一个就按一次回车。输入非正整数表示输入完成\n");
+
+        while (scanf("%d", &a), a > 0) {
+            sum += a;
+            ++count;
+        }
+
+        double re = (double) sum / count;
+        printf("以上数字的平均值是：%lf\n", re);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+其实c语言提供了一种类似于while的语句，叫做do while，这玩意是真没用（唯一用途可能是在进阶的宏声明里），我们就跳过了。
+
+我们在使用while语句解决一些需要重复若干次循环的问题时，会发现它不太方便，比如我们想要打印10次Hello World
+
+\begin{lstlisting}[language=C]
+    int i = 1;
+    while (i <= 10) {
+        printf("Hello World\n");
+        ++i;
+    }
+\end{lstlisting}
+
+我们发现，为了循环计数，我们在外层定义了一个变量，还要在循环里时刻想着别忘了它的自增。这样非常麻烦，因此c语言提供了for语句，它的语法是 for (初始条件; 终止条件; 赋值语句) 下属语句。比如上面的例子，我们可以这样使用for语句实现
+
+\begin{lstlisting}[language=C]
+    for (int i = 0; i < 10; ++i) {
+        printf("Hello World\n");
+    }
+\end{lstlisting}
+
+这是什么意思呢？在执行for语句的时候，首先执行初始条件，创建了一个叫做i的变量，随后执行终止条件，发现满足，因此执行下属语句。下属语句执行完了，就会执行赋值语句，随后再执行终止条件。如果仍满足条件就继续执行下属语句，然后再执行赋值语句，如此一直循环，直到不满足终止条件为止，此时退出循环。
+
+在我们的示例中，我们首先创建了变量i，然后到了终止条件，发现满足i小于10，因此执行下属语句，打印了一次，随后执行赋值语句，i变成了1，一直这样执行，直到i变成了10，此时不满足终止条件了，退出循环。我们从0一直执行到9，执行了10次。
+
+那么，为什么不像while的例子那样，写成这样
+
+\begin{lstlisting}[language=C]
+    for (int i = 1; i <= 10; ++i) {
+        printf("Hello World\n");
+    }
+\end{lstlisting}
+
+从1开始，这两段代码效果相同，但是后者不是更好理解吗？其实不是，计算机世界往往从0开始计数（学习指针时会解释为什么），我们这样写，还节省了一个等号，这样代码看上去反而更简洁有效。就是说，如果我们想要重复n次，那么代码就写成
+
+\begin{lstlisting}[language=C]
+    for (int i = 0; i < n; ++i)
+\end{lstlisting}
+
+这样的话，i就相当于一个计数器一样。值得注意的是，定义的临时变量只在for循环内有效，即
+
+\begin{lstlisting}[language=C]
+    for (int i = 0; i < n; ++i) {
+        // 这里可以使用i
+    }
+    // 这里不能用i
+\end{lstlisting}
+
+在for循环的下属语句内，我们也可以改变i的值。另外for也可以使用continue和break，比如我们在while写的输出1到100内偶数的例子，使用for可以改成
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        for (int i = 1; i <= 100; ++i) {
+            if (i % 2 != 0) {
+                continue;
+            }
+            printf("%d\n", i);
+        }
+        
+        return 0;
+    }
+\end{lstlisting}
+
+为什么i又赋成1了？我们要灵活变通，i在这里不只是计数器，它还要被输出，因此这样写更好。
+
+有意思的是，for的初始条件、终止条件和赋值语句都可以不写，而是使用别的地方的代码替代。比如，如果我们使用的是定义在别的地方的变量作为循环的变量，那么就可以这样写
+
+\begin{lstlisting}[language=C]
+    int a = 0;
+    for (; a < n; ++a) {}
+\end{lstlisting}
+
+也即，我们空下了初始条件部分。如果我们退出循坏是通过下属语句的break，那么for循环就可以写成
+
+\begin{lstlisting}[language=C]
+    for (int a = 0;; ++a) {
+        if (a >= n) {
+            break;
+        }
+    }
+\end{lstlisting}
+
+再比如，如果我们对a的赋值在下属语句，那么可以不写赋值语句
+
+\begin{lstlisting}[language=C]
+    for (int a = 0; a < n;) {
+        ++a;
+    }
+\end{lstlisting}
+
+总之，不需要哪部分就不写哪部分即可，但是不要忘记使用分号隔开各个部分。当然了，我们还可以同时不写多个部分，这都取决于具体情况。另外，有时我们会见到这样的代码
+
+\begin{lstlisting}[language=C]
+    for (;;) {}
+\end{lstlisting}
+
+这就是一个死循环，等价于
+
+\begin{lstlisting}[language=C]
+    while (1) {}
+\end{lstlisting}
+
+我们在引入for的时候就解释了它相对于while的优势，那么while的优势是什么？我们发现，for语句更像是为了确定循环次数的情况而设计的，在不确定循环次数的情况下，while更加简单。这二者都很重要，在实际开发时要经过思考后选用合适的循环语句。
