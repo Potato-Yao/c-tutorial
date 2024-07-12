@@ -1,0 +1,71 @@
+1.
+标准输入和输出
+
+In0
+1
+Out0
+1
+
+In1
+14
+Out1
+14
+
+2.
+计算圆的周长，已知$\pi=3.14$，用户输入圆的半径，输出圆的周长
+
+In0
+2
+Out0
+12.56
+
+In1
+10
+Out1
+62.80
+
+3.
+温度转换
+用户输入摄氏度（celsius），将其转换为华氏度（fahrenheit）
+
+已知：F = C * 1.8 + 32
+
+In0
+5
+Out0
+41.00
+
+In1
+12
+Out1
+53.60
+
+4.
+简单计算器
+
+用户输入两个数字，求出其加减乘除运算结果并打印
+
+In0
+1 2
+
+Out0
+Sum: 3
+Difference: -1
+Product: 2
+Quotient: 0.500
+
+
+In1
+5 31
+
+Out1
+Sum: 36
+Difference: -26
+Product: 155
+Quatient:0.161
+
+5. BMI计算器
+
+用户输入身高和体重，输出BMI，保留两位小数
+
+BMI = \frac{mass}{height^2}

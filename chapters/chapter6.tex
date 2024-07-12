@@ -1,0 +1,218 @@
+\section{函数}
+
+\subsection{函数的定义}
+
+想象一下，我们有一个需求，需要输入三个整型$a$、$b$和$c(c\neq{}0)$，计算这样一个数字
+
+$$
+x = \frac{a^2 + b^2}{c^2} + \frac{a(a^2 - c^2)}{b^2 + c}
+$$
+
+我们的程序会写成这样
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a;
+        int b;
+        int c;
+        scanf("%d %d %d", &a, &b, &c);
+
+        if (c == 0) {
+            printf("c不能为0！\n");
+        } else {
+            double x = (double)(a * a + b * b) / (c * c) + (double)(a * (a * a - c * c)) / (b * b + c);
+            printf("%lf\n", x);
+        }
+
+        return 0;
+    }
+\end{lstlisting}
+
+这里算$x$的式子看着就让人头大，也许我们可以提前把三个数的平方算出来，把程序改成这样
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a;
+        int b;
+        int c;
+        scanf("%d %d %d", &a, &b, &c);
+
+        int a2 = a * a;
+        int b2 = b * b;
+        int c2 = c * c;
+
+        if (c == 0) {
+            printf("c不能为0！\n");
+        } else {
+            double x = (double)(a2 + b2) / c2 + (double)(a * (a2 - c2)) / (b2 + c);
+            printf("%lf\n", x);
+        }
+
+        return 0;
+    }
+\end{lstlisting}
+
+这样代码确实简洁了很多，但是我们发现，对三个数进行平方运算的代码是一样的，我们如果能把这段代码提取出来，使得代码可以被复用，我们的程序就会简单很多。这就像是数学中的函数一样，我们给定一个输入，它给出一个输出。c语言也提供了函数，便于我们复用代码。我们在定义变量的时候，有变量的声明语法和赋值语法，函数也是类似的，有函数原型和函数的实现。
+
+我们在数学中学习函数时，知道函数有名字（比如正弦函数），函数传入一个值，并返回一个值（比如我们向正弦函数传入$\pi/4$，返回的就是$\sqrt{2}/2$）。有些函数可能传入两个或多个值（比如$f(a, b, c) = a + b + c$），但是总是只返回一个值（比如$f(1, 2, 3)$返回6）。
+
+c语言中的函数也是类似的，一个函数，有函数名，参数列表和返回值。所谓函数名，就是函数的名字，对函数的取名要尽可能简明扼要地显示出函数的作用，比如起名Square就要优于起名为S，函数使用大驼峰命名，就像命名常量一样；参数列表，就是传入函数的变量，每个参数之间用逗号连接，如我们要传入两个整型，就可以写成int a, int b；至于返回值，就是函数计算后得到的值。由此，我们得到了定义函数原型的语法：返回值 函数名(参数列表);
+
+比如，我们想要实现这个函数
+
+\[ \text{Square}(x) = x^2, \; x \in \mathbb{Z} \]
+
+就可以这样写它的函数原型
+
+\begin{lstlisting}[language=C]
+    int Square(int x);
+\end{lstlisting}
+
+这行代码意味着我们的函数名为Square，一看就知道是用于计算平方的。它的参数列表只有一个整型x，返回值也是整型。
+
+注意，函数原型要写在main函数之前。有了函数原型，就要写函数的具体实现了，其语法是将函数原型照抄一遍，但是将最后的分号改成花括号，将程序主体在写花括号内，比如
+
+\begin{lstlisting}[language=C]
+    int Square(int x) {
+        return x * x;
+    }
+\end{lstlisting}
+
+函数实现写在哪都可以，只要写在函数原型之后即可。这里的return就是用于返回返回值的。函数执行到return就结束了，因此一切写到return后的语句都是无效的。当我们调用函数Square时，里面的程序就会像main函数一样从上到下依次执行。
+
+接下来就要调用函数了，调用函数的语法是函数名(参数)。也就是说，我们可以这样调用Square。
+
+\begin{lstlisting}[language=C]
+    Square(a);
+\end{lstlisting}
+
+那么，我们怎么获得函数的返回值呢？我们定义一个变量，用它来接收即可，比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int Square(int x);
+
+    int Square(int x) {
+        return x * x;
+    }
+
+    int main() {
+        int a = 2;
+        int b = Square(a);
+
+        printf("a的平方是%d\n", b);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+运行程序，输出结果是4。我们明明是对a进行计算，为什么函数里使用的是x呢？观察main函数内的代码，我们发现，我们将a作为参数传给了Square，因此Square内的x就是a。
+
+就像是变量的声明和赋值可以放在一起一样，函数原型和函数实现也可以写在一起，像是上面的代码，我们可以改写成
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int Square(int x) {
+        return x * x;
+    }
+
+    int main() {
+        int a = 2;
+        int b = Square(a);
+
+        printf("a的平方是%d\n", b);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+既然如此，为什么还要写一个函数原型呢？我们前面说，函数实现可以写在其它任何地方，也就是说，上面的代码可以写成
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int Square(int x);
+
+    int main() {
+        int a = 2;
+        int b = Square(a);
+
+        printf("a的平方是%d\n", b);
+        
+        return 0;
+    }
+
+    int Square(int x) {
+        return x * x;
+    }
+\end{lstlisting}
+
+如果我们有一堆函数，我们就可以只在main前写函数原型，将所有的函数实现写在后面，这样代码更加简洁。后面学习头文件时，我们会对这一点有更深刻的了解。
+
+当然了，我们也可以在函数里写除了求值外的其它功能，比如将Square改成
+
+\begin{lstlisting}[language=C]
+    int Square(int x) {
+        printf("计算%d的平方！\n", x);
+        return x * x;
+    }
+\end{lstlisting}
+
+如果我们的函数不需要返回值什么办？比如我们写一个函数用来打印n次Hello，函数体内肯定是这样的
+
+\begin{lstlisting}[language=C]
+    for (int i = 0; i < n; ++i) {
+        printf("Hello\n");
+    }
+\end{lstlisting}
+
+这个函数不需要返回值，因此使用void写在返回值的地方。因此这个函数就变成了
+
+\begin{lstlisting}[language=C]
+    void SayHello(int n) {
+        for (int i = 0; i < n; ++i) {
+            printf("Hello\n");
+        }
+    }
+\end{lstlisting}
+
+在调用它的时候，也就不需要一个变量要接收它的返回值了，我们可以直接这样写
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    void SayHello(int n) {
+        for (int i = 0; i < n; ++i) {
+            printf("Hello\n");
+        }
+    }
+
+    int main() {
+        SayHello(2);
+        
+        return 0;
+    }
+\end{lstlisting}
+
+实际上，有返回值的函数也不必须要接收它的返回值，但是这样就浪费了它的返回值。
+
+我们在写函数原型时写的参数列表叫做函数的形式参数，简称形参。在调用函数时传入的参数叫做函数的实际参数，简称实参。
+
+我们写一个函数，可能需要让它完成很多工作，因此我们推荐在函数原型前写多行注释要详细阐释函数的作用以及每个参数、返回值的作用。比如
+
+\begin{lstlisting}[language=C]
+    /*
+    计算数字的平方
+    x 需要计算的底数
+    return 传入数的平方值
+    */
+    int Square(int x);
+\end{lstlisting}
+
+\subsection{main函数}
