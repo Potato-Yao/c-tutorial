@@ -204,6 +204,30 @@ c语言中的函数也是类似的，一个函数，有函数名，参数列表�
 
 我们在写函数原型时写的参数列表叫做函数的形式参数，简称形参。在调用函数时传入的参数叫做函数的实际参数，简称实参。
 
+一个函数可以没有返回值，也可以没有形参。比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    void SayHi() {
+        printf("Hi\n");
+    }
+
+    int main() {
+        SayHi();
+        
+        return 0;
+    }
+\end{lstlisting}
+
+在一些比较古老的编译器中，我们需要使用void来显式地说明函数没有形参，比如将上面的函数改成
+
+\begin{lstlisting}[language=C]
+    void SayHi(void) {
+        printf("Hi\n");
+    }
+\end{lstlisting}
+
 我们写一个函数，可能需要让它完成很多工作，因此我们推荐在函数原型前写多行注释要详细阐释函数的作用以及每个参数、返回值的作用。比如
 
 \begin{lstlisting}[language=C]
@@ -215,4 +239,44 @@ c语言中的函数也是类似的，一个函数，有函数名，参数列表�
     int Square(int x);
 \end{lstlisting}
 
+另外值得注意的是，函数就像变量一样，是不能重名的。比如这样是不允许的
+
+\begin{lstlisting}[language=C]
+    int Square(int x);
+    int Square(int x);  // 重复定义！
+\end{lstlisting}
+
+观察这种情况
+
+\begin{lstlisting}[language=C]
+    int Square(int x);
+    int Square(int x, int y);
+\end{lstlisting}
+
+像这样，两个函数只是名称相同，但参数列表或返回值不同的情况叫做函数的重载。c语言不支持函数重载，因此上面的代码也是错误的。但是很多计算机语言都是允许这样的，如C++和Java。
+
 \subsection{main函数}
+
+我们一直在main函数内写程序，它是程序入口，main函数中的程序会有上到下执行，我们的一切程序都是由main函数组织起来的。main函数写成
+
+\begin{lstlisting}[language=C]
+    int main() {}
+\end{lstlisting}
+
+这说明它是一个返回值为整型的函数，我们之前一直在代码最后写
+
+\begin{lstlisting}[language=C]
+    int main() {
+        return 0;
+    }
+\end{lstlisting}
+
+这就是main函数的返回值了。我们默认返回0，因为这代表着程序正常执行。那么这个返回值在哪里能看到呢？我们执行完程序后，会发现终端最后有一行“退出代码0”，这就是main函数的返回值。如果我们把main的返回值改成别的数字，那么这里的“退出代码”也会改变。
+
+我们看到，main函数就是一个没有形参，返回值为整型的函数。实际上main函数还可以写成这样
+
+\begin{lstlisting}[language=C]
+    int main(int argc, char *argv[]) {}
+\end{lstlisting}
+
+这里的main接收两个参数，后面这个奇形怪状的argv暂且不需要知道是干什么的，我们在学习数组时会介绍它的作用。
