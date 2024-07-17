@@ -62,6 +62,8 @@ $$
 
 c语言中的函数也是类似的，一个函数，有函数名，参数列表和返回值。所谓函数名，就是函数的名字，对函数的取名要尽可能简明扼要地显示出函数的作用，比如起名Square就要优于起名为S，函数使用大驼峰命名，就像命名常量一样；参数列表，就是传入函数的变量，每个参数之间用逗号连接，如我们要传入两个整型，就可以写成int a, int b；至于返回值，就是函数计算后得到的值。由此，我们得到了定义函数原型的语法：返回值 函数名(参数列表);
 
+代码风格提示：函数使用大驼峰命名，即CapitalizeTheFirstLetterOfEachWord
+
 比如，我们想要实现这个函数
 
 \[ \text{Square}(x) = x^2, \; x \in \mathbb{Z} \]
@@ -255,6 +257,50 @@ c语言中的函数也是类似的，一个函数，有函数名，参数列表�
 
 像这样，两个函数只是名称相同，但参数列表或返回值不同的情况叫做函数的重载。c语言不支持函数重载，因此上面的代码也是错误的。但是很多计算机语言都是允许这样的，如C++和Java。
 
+我们可以在函数里调用别的函数，比如
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    void A() {
+        printf("Hi\n");
+    }
+
+    void B() {
+        A();
+        printf("Hi Hi Hi\n");
+    }
+
+    int main() {
+        B();
+        
+        return 0;
+    }
+\end{lstlisting}
+
+其实函数还可以调用自己，这种情况叫函数的递归。比如我们可以设计一段程序计算斐波那契数列，它的定义是
+
+\begin{equation*}
+   F(n) = \begin{cases}
+    1, \text{if } n = 1, 2;\\
+    F(n - 1) + F(n - 2), \text{if } n > 2;
+   \end{cases} 
+\end{equation*}
+
+因此可以这样递归地实现斐波那契数列的计算
+
+\begin{lstlisting}[language=C]
+    int Fibonacci(int n) {
+        if (n == 1 || n == 2) {
+            return 1;
+        }
+        // 使用卫语句简化了函数！
+        return Fibonacci(n -1) + Fibonacci(n - 2);
+    }
+\end{lstlisting}
+
+比如我们要计算n为5的时候的值，函数就会去计算n为4和n为3时的值；要想计算n为4时的值，函数就需要计算n为3和n为2的值；要想计算n为3的值，就需要n为2和n为1的值。也就是说，在使用这个函数的时候，需要一直调用这个函数直到不再需要调用自己。所以递归的函数往往运算比较慢，而且也不利于我们阅读。因此，除了个别极其利于使用递归的情况，我们一般很少使用递归。
+
 \subsection{main函数}
 
 我们一直在main函数内写程序，它是程序入口，main函数中的程序会有上到下执行，我们的一切程序都是由main函数组织起来的。main函数写成
@@ -280,3 +326,57 @@ c语言中的函数也是类似的，一个函数，有函数名，参数列表�
 \end{lstlisting}
 
 这里的main接收两个参数，后面这个奇形怪状的argv暂且不需要知道是干什么的，我们在学习数组时会介绍它的作用。
+
+为什么main函数可以有两种形式呢？不是说c语言不支持函数重载吗？实际上，main函数是唯一一个特例，这与编译中的连接过程有关，我们就不多介绍了。
+
+\subsection{标准库函数}
+
+我们之前一直在使用printf和scanf，我们发现，我们就是按照调用函数的函数名(参数)的语法使用它们的。实际上，这二者就是两个函数，它们是由编译器所连接的标准库实现的。
+
+c语言提供了很多库函数，可以使用它们完成一些最底层的任务。比如我们之后会学习到用于开辟内存空间的malloc，复制字符串的strcpy，复制内存的memcpy等。我们要想使用库函数，就需要引用对应的头文件。
+
+其实我们已经引用过头文件了，就是在代码最开头写的
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+\end{lstlisting}
+
+也即，引用标准库头文件的语法是\#include <头文件名>。
+
+我们以前使用过\#define来声明一个常量，这种写在井号后的语句叫做宏。在代码编译前会经由预处理器处理，它会把所有宏都替换成文本或者字面量。我们在使用\#include宏时，预处理器会将引用的头文件中的所有代码都替换到我们的代码中。头文件中的代码都是函数原型，函数的实现位于编译器连接的标准库的二进制文件中。
+
+在学习项目结构时，我们会学习如何编写头文件并引用自定义的头文件。
+
+我们在visual studio中，将光标放在函数上，右键，点击“转到定义”就可以转到函数的原型了。比如printf函数的原型是\footnote{以MSVC STL作为标准}
+
+\begin{lstlisting}[language=C]
+    _Check_return_opt_
+    _CRT_STDIO_INLINE int __CRTDECL printf(
+        _In_z_ _Printf_format_string_ char const* const _Format,
+        ...)
+    #if defined _NO_CRT_STDIO_INLINE
+    ;
+    #else
+    {
+        int _Result;
+        va_list _ArgList;
+        __crt_va_start(_ArgList, _Format);
+        _Result = _vfprintf_l(stdout, _Format, NULL, _ArgList);
+        __crt_va_end(_ArgList);
+        return _Result;
+    }
+    #endif
+\end{lstlisting}
+
+这个函数原型包含了大量宏和我们没有学过的知识，因此非常复杂。我们在准备使用一个标准库函数时，如何快速获得它的用法呢？实际上，网站cppreference\footnote{https://en.cppreference.com}提供了完整的c语言和c++语言标准，我们可以查阅这个网站来获取标准库函数的信息。
+
+还记得在最开始学习c语言，使用scanf时，visual studio告诉我们“scanf的返回值被省略”吗？我们现在可以解决这个问题了。
+
+首先查看网站cppreference，在“file input/output”下找到“scanf”，在“return value”下有这样一行话：“Number of receiving arguments successfully assigned (which may be zero in case a matching failure occurred before the first receiving argument was assigned)”。也即，返回值0意味着输入失败。因此，它的返回值实际上代表着函数执行成功与否。利用这一点，我们可以编写程序来处理错误输入
+
+\begin{lstlisting}[language=C]
+    int stat= scanf("%d", &n);
+    if (stat == 0) {
+        printf("输入有误！\n");
+    }
+\end{lstlisting}

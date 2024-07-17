@@ -1,1 +1,219 @@
 \section{流程控制 复杂实例}
+
+\subsection{变量作用域}
+
+考虑一段这样的程序
+
+\begin{lstlisting}[language=C]
+    #include <stdio.h>
+
+    int main() {
+        int a = 1;
+        if (a) {
+            int b = 1;
+            if (b) {
+                int c = 2;
+                printf("%d\n", c);
+            } else {
+                int c = 3;
+                printf("%d\n", c);
+            }
+        }
+        
+        return 0;
+    }
+\end{lstlisting}
+
+运行结果是2，如果我们把b的值改成0，那么运行结果就是3。我们之前说过，变量不可以重复定义，可是这里命名重复定义了变量c，为什么这段代码可以正常执行呢？
+
+我们把上面的代码抽象一下，提取出核心
+
+\begin{lstlisting}[language=C]
+    {
+        int c = 2;
+        printf("%d\n", c);
+    }
+    {
+        int c = 3;
+        printf("%d\n", c);
+    }
+\end{lstlisting}
+
+我们发现，实际上两个c定义在了两个并列的花括号内。在c语言中，变量会在定义变量一级的花括号结束时被销毁。比如上面的代码，第一个变量c定义在第一个花括号内，因此当第一个花括号结束时，它就被销毁了，因此在第二个花括号中再定义一个c是不冲突的。
+
+再考虑这种情况
+
+\begin{lstlisting}[language=c]
+    {
+        int a;
+        {
+            int a;
+        }
+    }
+\end{lstlisting}
+
+这样就不行了。因为定义变量a的一级的花括号在代码的最后才结束，当我们第二次定义a的时候，之前的a还没有被销毁，所以这段代码是有错误的。
+
+由于在第二级括号的时候a还没有被销毁，因此我们还是可以使用它的
+
+\begin{lstlisting}[language=c]
+    {
+        int a = 1;
+        {
+            printf("%d\n", a);
+        }
+    }
+\end{lstlisting}
+
+但是内层的变量在外层就不能用了，比如
+
+\begin{lstlisting}[language=c]
+    {
+        {
+            int a = 1;
+        }
+        printf("%d\n", a);
+    }
+\end{lstlisting}
+
+这是不行的，因为a在内层花括号结束时就被销毁了。
+
+\subsection{跳转语句}
+
+c语言提供了一种叫做goto的语句，用来进行跳转。要想使用goto，我们需要先定义一个标签，比如
+
+\begin{lstlisting}[language=c]
+    #include <stdio.h>
+
+    int main() {
+        int n = 1;
+    label:
+        printf("%d\n", n);
+        ++n;
+
+        return 0;
+    }
+\end{lstlisting}
+
+然后使用goto label就可以跳转到标签的位置了，比如将上面的代码扩充为
+
+\begin{lstlisting}[language=c]
+    #include <stdio.h>
+
+    int main() {
+        int n = 1;
+    label:
+        printf("%d\n", n);
+        ++n;
+        if (n < 10) {
+            goto label;
+        }
+
+        return 0;
+    }
+\end{lstlisting}
+
+这段代码会输出1到9。这是因为当n小于10，进入if语句的时候，会执行下属的goto语句，跳转到label所在的地方，又重新开始向下执行代码。
+
+笔者强烈建议永远不要使用goto语句，因为它会导致代码的可读性严重降低，产生难以捕获的bug。并且所有的label都只能在同一个函数中跳转，局限性大（非local的跳转需要使用setjump.h，非常复杂）。goto语句完全可以被使用恰当的break替代，因此不要使用goto。
+
+\subsection{循环语句的复杂嵌套}
+
+考虑这个需求：需要输入行数和列数，打印对应行数和列数的一个由1组成的矩形，比如输入2 3，打印
+
+\begin{mdframed}
+\begin{verbatim}
+    11
+    11
+    11
+\end{verbatim}
+\end{mdframed}
+
+怎么实现？我们可以考虑使用一个循环来控制行数，在每一行中用另一个循环来打印对应个数的1和换行符。因此我们需要两个计数器，程序首先写成了
+
+\begin{lstlisting}[language=c]
+    #include <stdio.h>
+
+    int main() {
+        int row;
+        int col;
+        scanf("%d %d", &row, &col);
+
+        int i = 0;
+        int j = 0;
+        while (i < row) {
+            while (j < col) {
+                ++j; 
+            }
+            ++i;
+        }
+        
+        return 0;
+    }
+\end{lstlisting}
+
+外层循环控制的是循环几次，即输出几行，内层则控制一行输出多少个1。因此，内层循环的时候要输出1，外层则要在每次循环结束的时候输出一个换行符。所以代码应该写成
+
+\begin{lstlisting}[language=c]
+    int i = 0;
+    int j = 0;
+    while (i < row) {
+        while (j < col) {
+            printf("1");
+            ++j; 
+        }
+        printf("\n");
+        ++i;
+    }
+\end{lstlisting}
+
+我们试着运行一下，比如输入3 4，发现运行结果是这样的
+
+\begin{mdframed}
+\begin{verbatim}
+    1111
+
+
+
+
+\end{verbatim}
+\end{mdframed}
+
+为什么后面没有1而是只有换行？观察我们的代码，发现在外层第一次循环结束后，j的值等于row，因此在外层进入第二次循环的时候，不会进入内层的循环。为了解决这个问题，我们需要在外面每次循环结束的时候重置j的值，即将代码改成
+
+\begin{lstlisting}[language=c]
+    int i = 0;
+    int j = 0;
+    while (i < row) {
+        while (j < col) {
+            printf("1");
+            ++j; 
+        }
+        printf("\n");
+        j = 0;
+        ++i;
+    }
+\end{lstlisting}
+
+这次再次运行结果就对了。
+
+使用while写太麻烦了，每次都要考虑定义临时变量和变量的自增与重置，我们可以使用for语句重写
+
+\begin{lstlisting}[language=c]
+    #include <stdio.h>
+
+    int main() {
+        int row;
+        int col;
+        scanf("%d %d", &row, &col);
+
+        for (int i = 0; i < row; ++i) {
+            for (int j = 0; j < col; ++j) {
+                printf("1");
+            }
+            printf("\n");
+        }
+
+        return 0;
+    }
+\end{lstlisting}
