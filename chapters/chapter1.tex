@@ -76,21 +76,21 @@
 
 \subsection{变量}
 
-变量（variable）顾名思义，就是可以变的量。一个变量肯定要有名字，然后要有一个值。这就像是我们的考试成绩，有一个叫做“数学成绩”的变量，这次可以是120，下次可以是130。在c语言中，我们这样声明变量：$type\quad{}name$，啥意思呢，比如我们要声明数学成绩（math\_grade），那么就可以这样写
+变量（variable）顾名思义，就是可以变的量。一个变量肯定要有名字，然后要有一个值。这就像是我们的考试成绩，有一个叫做“数学成绩”的变量，这次可以是120，下次可以是130。在c语言中，我们这样声明变量：\textit{type name}，啥意思呢，比如我们要声明数学成绩\textit{math\_grade}，那么就可以这样写：
 
 \begin{lstlisting}[language=C]
     int math_grade; 
 \end{lstlisting}
 
-这里的int是整数的意思，还有其它类型（如小数）我们之后会讲到。所以这行代码的意思就是，我们声明了一个叫做math\_grade的变量，它是一个整数。接下来就要给它赋值了，在大部分计算机语言中，赋值号都是=，比如数学成绩是120，那么就可以写
+这里的int是整数的意思，还有其它类型（如小数）我们之后会讲到。所以这行代码的意思就是，我们声明了一个叫做\textit{math\_grade}的变量，它是一个整数。接下来就要给它赋值了，在大部分计算机语言中，赋值号都是=，比如数学成绩是120可以这样写：
 
 \begin{lstlisting}[language=C]
     math_grade = 120;
 \end{lstlisting}
 
-这段代码的意思就是给math\_grade赋予120这个值。也即，我们将赋值号右边的值给了左边的变量。我们强调是将右边的值赋给左边，说明了这不是数学中的等号，它不意味着左右两边相等，也不能交换左右两边的位置。
+这段代码的意思就是给\textit{math\_grade}赋予120这个值。也即，我们将赋值号右边的值给了左边的变量。我们强调是将右边的值赋给左边，说明了这不是数学中的等号，它不意味着左右两边相等，也不能交换左右两边的位置。
 
-现在我们的main.c应该是这样的
+现在我们的main.c应该是这样的：
 
 \begin{lstlisting}[language=C]
     #include <stdio.h>
@@ -103,7 +103,7 @@
     }
 \end{lstlisting}
 
-第四行是声明变量，第五行是给变量赋值。如果我们在声明变量时就知道它要赋什么值，那么就可以把声明和赋值写在一起
+第四行是声明变量，第五行是给变量赋值。如果我们在声明变量时就知道它要赋什么值，那么就可以把声明和赋值\footnote{按照c语言标准，c语言不存在“赋值语句”，本书中“赋值语句”均指代赋值表达式语句}写在一起：
 
 \begin{lstlisting}[language=C]
     int math_grade = 120;
@@ -123,7 +123,7 @@
     int english_grade;
 \end{lstlisting}
 
-变量的声明只能有一次，但是赋值是可以有多次的，新的赋值会覆盖掉原先的值。比如
+变量的声明只能有一次，但是赋值是可以有多次的，新的赋值会覆盖掉原先的值。比如：
 
 \begin{lstlisting}[language=C]
     int math_grade = 120;
@@ -131,7 +131,7 @@
     math_grade = 140;
 \end{lstlisting}
 
-最后，数学成绩的值就是140。但是像这样再次声明变量是不允许的
+最后，数学成绩的值就是140。但是像这样再次声明变量是不允许的：
 
 \begin{lstlisting}[language=C]
     int math_grade = 120;
@@ -139,19 +139,66 @@
     int math_grade = 140;
 \end{lstlisting}
 
-第三行再次写了int math\_grade，再次声明了这个变量，这样的不行的。
+第三行再次写了\textit{int math\_grade}，再次声明了这个变量，这样的不行的。
 
-那么变量的命名遵循怎样的原则呢？我们这里的命名是math\_grade，其实也可以命名成MathGrade，也可以是mathGrade，可以是拼音shuxuechengji，甚至可以是汉语的数学成绩，如果你比较懒，直接命名l这样的单字母都可以。c语言要求，变量名开头不是数字、不包含空格、标点和\%、@等符号，不是c语言关键字（后面会介绍这个概念）即可。那么我们为什么使用了math\_grade呢？
+那么变量的命名遵循怎样的原则呢？我们这里的命名是\textit{math\_grade}，其实也可以命名成\textit{MathGrade}，也可以是\textit{mathGrade}，可以是拼音\textit{shuxuechengji}，甚至可以是汉语的数学成绩，如果你比较懒，直接使用一个字母来命名变量也可以。c语言要求，变量名开头不是数字、不包含空格、标点和\%、@等符号，不是c语言关键字（后面会介绍这个概念）即可。那么我们为什么使用了\textit{math\_grade}呢？
 
 首先我们说明为什么不用汉语或者汉语拼音。一方面，由于编码不同，在你的电脑上正常显示的中文可能在别人电脑上就变成了乱码（这就是第零章要求大家切换UTF8编码的原因），这样严重影响了正常的开发和交流工作。另一方面，大家有没有发现，当你在声明好变量后，你敲下“m”时就会出现一个框，可以直接补全math\_grade，这是IDE的自动补全功能，如果使用中文就无法自动补全了。zhi yu wei shen mo bu yong pin yin, ge wei jue de zhe yang de ke du xing gao ma?
 
 计算机语言的核心在于其逻辑而不是用了什么自然语言作为支撑，哪怕世界上第一门计算机语言是中国人发明的，计算机语言也会愈发趋向于使用字母来构成，因为这样效率更高。这样大家就可以明白那些被大肆宣扬的“汉语编程语言”的荒谬之处了，不要陷入了虚伪的爱国主义的陷阱。
 
-我们命名的math\_grade有个特点：单词全部小写，单词之间使用下划线\_连接。这种命名方式叫做蛇形命名法（snake\_case）。至于我们上面提到的mathGrade也是一种命名法，叫做小驼峰命名法（camelCase）。命名法和一些其它规则构成了代码风格（code style），本讲义遵循Google代码规范，也推荐各位使用这套代码规范。各位在阅读此讲义时应该注意示例代码的代码风格，自己写代码时要模仿示例代码的风格。不过，如果各位是参与到他人的项目，自然是要按照他人已有的标准来写代码。
+我们命名的\textit{math\_grade}有个特点：单词全部小写，单词之间使用下划线\_连接。这种命名方式叫做蛇形命名法（snake\_case）。至于我们上面提到的mathGrade也是一种命名法，叫做小驼峰命名法（camelCase）。命名法和一些其它规则构成了代码风格（code style），本讲义遵循Google代码规范，也推荐各位使用这套代码规范。各位在阅读此讲义时应该注意示例代码的代码风格，自己写代码时要模仿示例代码的风格。不过，如果各位是参与到他人的项目，自然是要按照他人已有的标准来写代码。
 
-代码风格提示：变量命名使用蛇形命名，即connect\_every\_lowercase\_word\_by\_underscore
+\begin{framed}
+    代码风格提示：变量命名使用蛇形命名，即connect\_every\_lowercase\_word\_by\_underscore
+\end{framed}
 
-我们可以这样打印整数变量
+
+在给变量命名时，我们既不能命名地过于简单以至于难以分辨变量的作用，也不能命名过于复杂以至影响代码的可读性。我们之后学习常量、函数等时也是如此。
+
+\begin{longtable}{c|c}
+    不推荐的命名 & 推荐的命名\\
+    \hline
+    s & sum\\
+    \hline
+    MathGrade & math\_grade\\
+    \hline
+    studentId & stduent\_id\\ 
+\end{longtable}
+
+另外，计算机科学中有一些常用的简写：
+
+\begin{longtable}{c|c}
+    简写 & 含义\\
+    \hline
+    re & result\\
+    \hline
+    res & result\\
+    \hline
+    res & reference\\
+    \hline
+    dest & destination\\
+    \hline
+    stat & statment\\
+    \hline
+    exp & expression\\
+    \hline
+    sys & system\\
+    \hline
+    exec & execute\\
+    \hline
+    src & source\\
+    \hline
+    lib & library\\
+    \hline
+    var & variable\\
+    \hline
+    func & function\\
+    \hline
+    info & infomation\\
+\end{longtable}
+
+我们可以这样打印整数变量：
 
 \begin{lstlisting}[language=C]
     #include <stdio.h>
@@ -166,13 +213,13 @@
     }
 \end{lstlisting}
 
-运行程序，输出了120。我们目前只需要这样理解：引号内的\%d是一个占位符，引号后面的math\_grade就是用来替换占位符的。因此我们就可以实现一些更复杂的输出了，比如
+运行程序，输出了120。我们目前只需要这样理解：引号内的\%d是一个占位符，引号后面的\textit{math\_grade}就是用来替换占位符的。因此我们就可以实现一些更复杂的输出了，比如：
 
 \begin{lstlisting}[language=C]
     printf("数学成绩为：%d\n", math_grade); 
 \end{lstlisting}
 
-现在拓展一下，如果我们定义了数学、语文和英语三门课的成绩，也即
+现在拓展一下，如果我们定义了数学、语文和英语三门课的成绩，也即：
 
 \begin{lstlisting}[language=C]
     int math_grade = 120;
@@ -180,15 +227,15 @@
     int english_grade = 140;
 \end{lstlisting}
 
-如何输出呢？我们只需要写三个占位符即可，也就是
+如何输出呢？我们只需要写三个占位符即可，也就是：
 
 \begin{lstlisting}[language=C]
     printf("数学成绩为：%d，语文成绩为：%d，英语成绩为：%d\n", math_grade, chinese_grade, english_grade); 
 \end{lstlisting}
 
-想象一下，假如我们定义了很多变量，有数学期中成绩，数学期末成绩，语文小测成绩，语文期末成绩……我们在代码里看这么多东西就头大，所以我们希望能用自然语言给它们加上注释，便于我们理解代码。在c语言中，有两种形式的注释：单行注释和多行注释。
+想象一下，假如我们定义了很多变量，有数学期中成绩，数学期末成绩，语文小测成绩，语文期末成绩……我们在代码里看这么多东西就头大，所以我们希望能用自然语言给它们加上注释，便于我们理解代码。在c语言中，有两种形式的注释（comment）：单行注释和多行注释。
 
-单行注释是两个斜杠（//），这两个斜杠之后就可以随便写字了，比如
+单行注释是两个斜杠（//），这两个斜杠之后就可以随便写字了，比如：
 
 \begin{lstlisting}[language=C]
     #include <stdio.h>
@@ -204,7 +251,7 @@
     }
 \end{lstlisting}
 
-多行注释的语法是/* */，在这之间可以随便写字，比如
+多行注释的语法是/* */，在这之间可以随便写字，比如：
 
 \begin{lstlisting}[language=C]
     #include <stdio.h>
@@ -223,7 +270,7 @@
     }
 \end{lstlisting}
 
-需要注意的是，多行注释不能这样写
+需要注意的是，多行注释不能这样写：
 
 \begin{lstlisting}[language=C]
     int math_grade;  /* 声明数学成绩 
@@ -234,15 +281,15 @@
 
 那么什么时候用单行注释，什么时候用多行注释呢？如果写注释的目的是对一行或几行代码做简单的说明，那么就用单行注释；假如注释的目的是要阐释一个复杂的原理（比如一段算法的数学原理或工程背景）或者解释一个函数（接下来会讲函数是什么）的功能，那么就应该使用多行注释。
 
-有了变量，肯定也要有常量\footnote{还有一种使用const定义的“常量”，与我们此处介绍的有区别。const定义的是一种只读的变量，关于它的知识在后续才会学习，现称的常量均为define宏定义}。在c语言中，我们使用\#define来声明常量。比如，圆周率$\pi$就是一个常量，我们可以这样在c语言中定义圆周率
+有了变量，肯定也要有常量（constant）\footnote{还有一种使用const定义的“常量”，与我们此处介绍的有区别。const定义的是一种只读的变量，关于它的知识在后续才会学习，现称的常量均为define宏定义}。在c语言中，我们使用\#define来声明常量。比如，圆周率$\pi$就是一个常量，我们可以这样在c语言中定义圆周率：
 
 \begin{lstlisting}[language=C]
     #define PI 3 
 \end{lstlisting}
 
-也即，定义常量的语法是\#define 常量名 常量的值。
+也即，定义常量的语法是\textit{\#define 常量名 常量的值}。
 
-我们定义圆周率是3，是一个整数，因此可以按照上文的方法将其打印出来
+我们定义圆周率是3，是一个整数，因此可以按照上文的方法将其打印出来：
 
 \begin{lstlisting}[language=C]
     #include <stdio.h>
@@ -256,7 +303,7 @@
     }
 \end{lstlisting}
 
-你可能觉得奇怪，为什么定义常量的语法和变量区别这么大呢？既不需要写赋值号，也不需要标明类型。实际上，\#define是一个宏，在c语言中，程序被编译运行前，会有一个叫做预处理器的程序将所有宏替换为对应的值，也就是说（在只考虑\#define宏的情况下），上面的代码经过预处理器会变成这样
+你可能觉得奇怪，为什么定义常量的语法和变量区别这么大呢？既不需要写赋值号，也不需要标明类型。实际上，\#define是一个宏（macro），在c语言中，程序被编译运行前，会有一个叫做预处理器（preprocessor）的程序将所有宏替换为对应的值，也就是说（在只考虑\#define宏的情况下），上面的代码经过预处理器会变成这样
 
 \begin{lstlisting}[language=C]
     #include <stdio.h>
@@ -270,9 +317,11 @@
 
 发现了吗？我们定义的常量PI被直接替换成了它的值$3$，既然是直接替换，就相当于是写死在了程序里，没法修改，所以就是常量了。实际上，我们行首的\#include也是一个宏，它的效果和\#define类似。关于宏和预处理的知识我们在之后会学习到。
 
-代码风格提示：命名常量，一般采用大驼峰命名法（CamelCase），也即所有单词都连在一起，每个单词的首字母大写。如CapitalizeTheFirstLetterOfEachWord
+\begin{framed}
+    代码风格提示：命名常量，一般采用大驼峰命名法（CamelCase），也即所有单词都连在一起，每个单词的首字母大写。如CapitalizeTheFirstLetterOfEachWord
+\end{framed}
 
-我们给出一个数字1，这个数字的值是写在纸面上的，仅仅通过这个数字本身就可以知道。像这样的量就被称为字面量。举几个例子：数字42是字面量，"hello"是字面量，但是变量int a不是字面量，当我们给a赋值时
+我们给出一个数字1，这个数字的值是写在纸面上的，仅仅通过这个数字本身就可以知道。像这样的量就被称为字面量（literal）。举几个例子：数字42是字面量，"hello"是字面量，但是变量int a不是字面量，当我们给a赋值时：
 
 \begin{lstlisting}[language=C]
     int a = 1;  // 赋值号左边的a不是字面量，右边的1是字面量，即使a被赋值它也不是字面量，因为你无法仅仅从a这个名字本身判断它的值
@@ -282,7 +331,7 @@
 
 \subsection{scanf函数}
 
-scanf函数是scan function，它用来从终端获取输入的文本。这个东西涉及到一些我们还没有学到的知识，但是我们后续的学习很难离开它，因此需要在这里对其简单介绍，我们目前不需要了解它的原理，会用就可以。
+scanf函数（scan format）用来从终端获取输入的文本。这个东西涉及到一些我们还没有学到的知识，但是我们后续的学习很难离开它，因此需要在这里对其简单介绍，我们目前不需要了解它的原理，会用就可以。
 
 首先，打开visual stdio，在main.c中输入一段这样的代码
 
